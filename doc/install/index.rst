@@ -141,7 +141,41 @@ you install will only be accessible when you've activated the environment.
 virtual environment as we just did in the line above.**
 
 
-Step 2: Install MediaDrop
+Step 2: Install database drivers
+================================
+
+MediaDrop uses `SQLAlchemy <http://www.sqlalchemy.org/>` in order to access
+the database server, so you need yo install a database driver in order to
+access your favourite database. The following lines will descrive how two
+install a database driver for the most used databases:
+
+
+a. MySQL:
+
+.. sourcecode:: bash
+
+   pip install mysql-python
+
+or
+
+.. sourcecode:: bash
+
+   easy_install mysql-python
+
+b. PostgreSQL:
+
+.. sourcecode:: bash
+
+   pip install psycopg2
+
+or
+
+.. sourcecode:: bash
+
+   easy_install psycopg2
+
+
+Step 3: Install MediaDrop
 ============================
 
 There are two main ways to get MediaDrop:
@@ -183,7 +217,7 @@ b. **For developers and power users** we recommend using the source code
       cd ..
 
 
-Step 3: Basic Configuration File
+Step 4: Basic Configuration File
 ================================
 
 Next we generate a configuration file named ``deployment.ini`` which contains
@@ -212,6 +246,13 @@ password, and database name. For example:
 
    sqlalchemy.url = mysql://mediadrop_user:mysecretpassword@localhost/mediadrop?charset=utf8&use_unicode=0
 
+If you use PostgreSQL you must change the driver and remove the connection
+parameters defined by default. So the resulting url might look like:
+
+.. sourcecode:: ini
+
+   sqlalchemy.url = postgresql://mediadrop_user:mysecretpassword@localhost/mediadrop
+
 
 Developers should also set ``debug = true`` in the config file but be aware that
 this is a security risk in a publicly accessible deployment. 
@@ -219,7 +260,7 @@ Also ``db.check_for_leaked_connections = True`` (in ``[app:main]``) might give
 you important warnings on the console.
 
 
-Step 4: Load Initial Data
+Step 5: Load Initial Data
 =============================
 
 First we need to set up the directory which contains all the file content. Copy
@@ -258,7 +299,7 @@ In a future release, we plan to release optional plugins to use
 a database-independent search engine.
 
 
-Step 5: Launch the Built-in Server
+Step 6: Launch the Built-in Server
 ==================================
 
 Now that MediaDrop itself is installed and the basics are configured,
@@ -283,7 +324,7 @@ If this is your development machine, you're good to go.
 
 .. _production_deployments:
 
-Step 6: Production Deployments
+Step 7: Production Deployments
 ==============================
 
 MediaDrop is WSGI-based so there are many possible ways to deploy it.

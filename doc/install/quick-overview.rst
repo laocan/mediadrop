@@ -20,6 +20,8 @@ If you're not already familiar with the process, head to the main
 #. For production, run ``paster make-config mediacore deployment.ini``
    and to create a unique ``deployment.ini`` config. On development
    machines there's already a ``development.ini`` file for you to use.
+#. Install your prefered database drivers. We recommend using MySQL or
+   PostgreSQL for production servers. Development environments can run sqlite.
 #. Configure your database credentials in the ini config file.
 #. Run ``paster setup-app path/to/your/config.ini`` to set up the database
    tables and data.
