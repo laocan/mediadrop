@@ -106,14 +106,14 @@ def setup_app(command, conf, vars):
     config = load_environment(conf.global_conf, conf.local_conf)
     plugin_manager = config['pylons.app_globals'].plugin_mgr
     mediadrop_migrator = MediaDropMigrator.from_config(conf, log=log)
-    
+
     engine = metadata.bind
     db_connection = engine.connect()
     # simplistic check to see if MediaDrop tables are present, just check for
     # the media_files table and assume that all other tables are there as well
     from mediadrop.model.media import media_files
     mediadrop_tables_exist = engine.dialect.has_table(db_connection, media_files.name)
-    
+
     run_migrations = True
     if not mediadrop_tables_exist:
         head_revision = mediadrop_migrator.head_revision()
@@ -137,9 +137,9 @@ def setup_app(command, conf, vars):
         for migrator in plugin_manager.migrators():
             migrator.migrate_db()
         events.Environment.database_migrated()
-    
+
     cleanup_players_table(enabled=True)
-    
+
     # Save everything, along with the dummy data if applicable
     DBSession.commit()
     events.Environment.database_ready()
@@ -225,21 +225,21 @@ def add_default_data():
     authenticated_group = Group(name=u'authenticated', display_name=u'Logged in users')
     DBSession.add(authenticated_group)
 
-    admin_perm = Permission(name=u'admin', groups=[admin_group], 
+    admin_perm = Permission(name=u'admin', groups=[admin_group],
         description=u'Grants access to the admin panel')
     DBSession.add(admin_perm)
 
-    edit_perm = Permission(name=u'edit', groups=[admin_group, editor_group], 
+    edit_perm = Permission(name=u'edit', groups=[admin_group, editor_group],
         description=u'Grants access to edit site content')
     DBSession.add(edit_perm)
-    
-    view_perm = Permission(name=u'view', 
-        groups=[admin_group, anonymous_group, editor_group], 
+
+    view_perm = Permission(name=u'view',
+        groups=[admin_group, anonymous_group, editor_group],
         description=u'View published media')
     DBSession.add(view_perm)
 
-    upload_perm = Permission(name=u'upload', 
-        groups=[admin_group, anonymous_group, editor_group], 
+    upload_perm = Permission(name=u'upload',
+        groups=[admin_group, anonymous_group, editor_group],
         description=u'Can upload new media')
     DBSession.add(upload_perm)
     media_upload_perm = Permission()
@@ -432,11 +432,14 @@ def generate_appearance_css(settings, cache_dir=None):
     vars = dict((k.encode('utf-8'), v.encode('utf-8'))
                 for k, v in settings
                 if k.startswith('appearance_'))
+    for k, v in appearance_settings:
+        vars.setdefault(k, v)
     vars['uikit_colors'] = uikit_colors[
-        vars['appearance_navigation_bar_color']]
-    vars['navbar_color'] = vars['appearance_navigation_bar_color']
+        vars.get('appearance_navigation_bar_color', 'purple')]
+    vars['navbar_color'] = vars.get('appearance_navigation_bar_color',
+        'purple')
 
-    if vars['appearance_logo']:
+    if vars.get('appearance_logo'):
         logo_path = os.path.join(appearance_dir, vars['appearance_logo'])
         if os.path.exists(logo_path):
             vars['logo_height'] = Image.open(logo_path).size[1]
